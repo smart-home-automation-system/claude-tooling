@@ -44,9 +44,9 @@ loops, so treat these as high severity:
 **Version consistency** — `spring-boot-starter-parent` and shared-library versions that
 diverge from the rest of the workspace (spot-check 2–3 sibling repos). Report, don't fix.
 
-**Public-repo hygiene** — secrets, tokens, IP addresses, private hostnames or other
-infrastructure details in committed files. These belong in `deployment-tools` (private)
-or in env/config outside git.
+**Public-repo hygiene** — secrets, tokens or credentials in committed files. These belong
+in `deployment-tools` (private) or in env/config outside git. Note: private LAN IPs in
+service configs are an accepted risk per `organization.md` — do not report them.
 
 **Tests** — new logic without tests; reactive code tested without `StepVerifier` or
 `WebTestClient` where those fit naturally.
