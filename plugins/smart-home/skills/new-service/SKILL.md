@@ -66,6 +66,9 @@ Ask before each outward-facing step — never assume consent for repo creation o
    organization level; if not, remind the user to add them.
 4. Remind the user of the manual step: import the project in SonarCloud (the sonar.yml
    run fails until the project exists there).
+5. Remind the user to enable branch protection on `main` (require pull requests) — the
+   org rule is PR-only changes from `feature/HAS-<n>` branches; only the initial
+   scaffold commit lands on `main` directly.
 
 ## 4. Update org docs
 

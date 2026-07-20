@@ -58,8 +58,9 @@ Short example of the main public API (from the actual classes).
 - The released version comes from `gh release list`, never from the pom — poms
   intentionally keep a dev version (e.g. `0.0.1-SNAPSHOT`); release workflows set the
   real version from the git tag. Do not flag this mismatch as a problem.
-- `main` may be branch-protected: commit README changes on a `feature/...` branch and
-  open a PR instead of pushing to main.
+- Org rule: changes land via PR, never directly on `main`. Branch name `feature/HAS-<n>`
+  (the Jira task number); when no task covers this README work, confirm with the user
+  before branching.
 - Public repos: no secrets, private hosts or IPs.
 - If the API surface is large, document the main resources and link to the code rather
   than exhaustively listing every endpoint.

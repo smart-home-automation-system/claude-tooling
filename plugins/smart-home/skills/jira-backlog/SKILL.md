@@ -59,6 +59,8 @@ Issue type is always **Task**. Each draft contains:
 - **Definition of Done** — checkboxes. Always include the applicable standard items plus
   feature-specific acceptance criteria:
   - implementation complete, `mvn verify` green (backend) / build + tests green (frontend)
+  - changes delivered via a PR from a `feature/HAS-<n>` branch (org rule — no direct
+    commits to `main`)
   - `service-review` + `/code-review` run on the changes (backend); PR opened with
     self-review and screenshots, reviewed and merged by the user (frontend)
   - documentation updated: repo README via `update-readme` when API/behavior changed,

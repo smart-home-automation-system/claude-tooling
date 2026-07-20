@@ -53,6 +53,9 @@ Same as for services — ask before each outward-facing step:
 2. `gh repo create smart-home-automation-system/<name> --public --source=. --push`
 3. Verify workflow secrets resolve (`SONAR_TOKEN`, `GH_PRV_*`; publishing itself uses the
    automatic `GITHUB_TOKEN`), remind about SonarCloud project import.
+4. Remind the user to enable branch protection on `main` (require pull requests) — the
+   org rule is PR-only changes from `feature/HAS-<n>` branches; only the initial
+   scaffold commit lands on `main` directly.
 
 ## 4. Update org docs
 
