@@ -29,8 +29,11 @@ In-cluster every service listens on `6200` (management `9200`) — do not change
 
 Copy from `water-service/` and adapt (names, packages, ports, only the requested deps):
 
-- `pom.xml` — artifactId/name/description; keep the `spring-boot-starter-parent` version
-  and `<repositories>` block exactly as in the reference; drop unneeded dependencies.
+- `pom.xml` — artifactId/name/description; keep the `<repositories>` block exactly as in
+  the reference; drop unneeded dependencies. **Versions**: set `spring-boot-starter-parent`
+  and `java.version` to the org **target toolchain** from the Conventions section of
+  `organization-repository/claude/organization.md` — the reference repo may still be on
+  older versions awaiting migration; new services always start on the target.
 - `src/main/java/cloud/cholewa/<domain>/` — application class + minimal package layout;
   `src/test/...` — matching test skeleton (context-loads test at minimum).
 - `src/main/resources/application.yaml` — `spring.application.name`, server port `6200`,
@@ -40,9 +43,12 @@ Copy from `water-service/` and adapt (names, packages, ports, only the requested
   (`magikabdul/<service-name>` in release.yml) and the Sonar project key
   (`smart-home-automation-system_<service-name>`).
 - `.gitignore`, `lombok.config` and any other root config present in the reference.
-- `README.md` — heading, one-paragraph description, local port, and the standard badge
-  block copied from an existing service entry in
-  `organization-repository/profile/README.md` with the repo name substituted.
+- `README.md` — copy the **reference service's own `README.md`** (water-service) and
+  substitute the repo name in every badge URL, then replace the Description section with
+  the new service's purpose and local port. Do not use the shorter badge block from the
+  org profile README — repo READMEs have a richer layout (CI/quality-gate/vulnerabilities,
+  release info, separator, language/Java/Spring/coverage/LoC, repo stats) that must be
+  preserved. Keep the Java/Spring version badges in sync with the pom.
 - `CLAUDE.md` — fill in `assets/CLAUDE-template.md`.
 
 The repo will be public: no secrets, tokens, IPs or private infrastructure details in any

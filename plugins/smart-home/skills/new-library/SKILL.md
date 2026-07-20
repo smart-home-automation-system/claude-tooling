@@ -28,14 +28,20 @@ Copy from `smart-home-sdk/` and adapt:
 - `pom.xml` — artifactId/name/description; keep groupId `cloud.cholewa` and the
   `<distributionManagement>` block, changing only the repo name in its URL
   (`https://maven.pkg.github.com/smart-home-automation-system/<name>`, server id `github`).
+  **Versions**: use the org target toolchain (Java, and Spring Boot parent if the library
+  uses it) from the Conventions section of
+  `organization-repository/claude/organization.md`, even if the reference repo lags.
 - `src/main/java/cloud/cholewa/<package>/` + test skeleton.
 - `.github/workflows/CI.yml`, `package.yml`, `sonar.yml` — adjust the Sonar project key
   (`smart-home-automation-system_<name>`). `package.yml` publishes to GitHub Packages on
   a GitHub release (the workflow sets the Maven version from the git tag — poms keep a
   dev version).
-- `.gitignore`, `lombok.config` if present, `README.md` (badge block copied from a library
-  entry in `organization-repository/profile/README.md`), short `CLAUDE.md`: purpose,
-  consumers, "user codes here himself", release via `package.yml`.
+- `.gitignore`, `lombok.config` if present; `readme.md` — copy the reference library's
+  own `readme.md` (note the lowercase filename convention in libraries), substitute the
+  repo name in every badge URL and replace the description line; keep its full layout
+  (CI/release badges, language/Java, repo stats) rather than the shorter org-profile
+  block. Short `CLAUDE.md`: purpose, consumers, "user codes here himself", release via
+  `package.yml`.
 
 Public repo: no secrets, IPs, or private infrastructure details.
 
