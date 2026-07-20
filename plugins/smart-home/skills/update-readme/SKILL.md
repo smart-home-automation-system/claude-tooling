@@ -55,6 +55,11 @@ Short example of the main public API (from the actual classes).
 
 - Preserve any valuable hand-written content — merge, don't clobber; show the user a
   summary of what changed.
+- The released version comes from `gh release list`, never from the pom — poms
+  intentionally keep a dev version (e.g. `0.0.1-SNAPSHOT`); release workflows set the
+  real version from the git tag. Do not flag this mismatch as a problem.
+- `main` may be branch-protected: commit README changes on a `feature/...` branch and
+  open a PR instead of pushing to main.
 - Public repos: no secrets, private hosts or IPs.
 - If the API surface is large, document the main resources and link to the code rather
   than exhaustively listing every endpoint.
