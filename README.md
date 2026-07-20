@@ -14,6 +14,7 @@ Contains the `smart-home` plugin with skills shared across all repositories:
 | `sync-org-docs` | Keep `organization.md` and the org profile README in sync with reality |
 | `deps-update` | Audit dependency versions across all workspace repos, plan upgrades |
 | `update-readme` | Bring a repo README up to org standard: badges, description, API docs |
+| `jira-backlog` | Feature description → scoped Jira tasks with DoD checklists, created in the HAS backlog after user acceptance (credentials in `<workspace>/.env`) |
 
 ## Installation
 
