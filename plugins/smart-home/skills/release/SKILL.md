@@ -58,3 +58,6 @@ gh release create <X.Y.Z> --title "<X.Y.Z>" --generate-notes
   `gh api /orgs/smart-home-automation-system/packages/maven/<group.artifact>/versions`.
 - For a library release that consumers are waiting for: list the consumer repos and offer
   to prepare the version-bump checklist for them.
+- **Library README**: if the readme pins a version in its Installation snippet, it is now
+  stale — update it to the just-released version (feature branch + PR when `main` is
+  protected). Include this in the checklist you hand to the user.
