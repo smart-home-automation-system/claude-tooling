@@ -15,6 +15,7 @@ Contains the `smart-home` plugin with skills shared across all repositories:
 | `deps-update` | Audit dependency versions across all workspace repos, plan upgrades |
 | `update-readme` | Bring a repo README up to org standard: badges, description, API docs |
 | `jira-backlog` | Feature description → scoped Jira tasks with DoD checklists, created in the HAS backlog after user acceptance (credentials in `<workspace>/.env`) |
+| `jira-sprint` | Monthly sprint management on the HAS board: status, close at ≥7 Done, carry-over into a new element-named sprint, top-up to ≥10 tasks with the user |
 
 ## Installation
 
