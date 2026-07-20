@@ -1,0 +1,13 @@
+{
+  "name": "smart-home-tooling",
+  "owner": {
+    "name": "Krzysztof Cholewa"
+  },
+  "plugins": [
+    {
+      "name": "smart-home",
+      "source": "./plugins/smart-home",
+      "description": "Shared Claude Code skills for the smart-home-automation-system organization: service/library scaffolding, convention reviews, releases, dependency audits and org docs sync"
+    }
+  ]
+}
