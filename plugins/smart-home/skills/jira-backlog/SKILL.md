@@ -65,6 +65,8 @@ Issue type is always **Task**. Each draft contains:
     self-review and screenshots, reviewed and merged by the user (frontend)
   - documentation updated: repo README via `update-readme` when API/behavior changed,
     `CLAUDE.md` when conventions changed
+  - service tasks additionally: the service **starts locally** (`local` Spring profile)
+    and is **deployed to the k8s cluster** with a verified rollout
   - when the task ends in a release: release performed per the `release` skill checklist
     and org docs refreshed via `sync-org-docs`
 

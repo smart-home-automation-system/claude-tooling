@@ -48,6 +48,9 @@ remote evidence (survives machine changes) over local state:
   to run the review now on the merged diff — late review beats no review.
 - **Release**: `gh release list` tag matching the change; artifact exists (Docker Hub
   manifest / GitHub Packages version).
+- **Local run**: verifiable — start the service with the `local` profile
+  (`mvn spring-boot:run -Dspring-boot.run.profiles=local` or the repo's documented
+  command) and confirm it boots without errors; stop it afterwards.
 - **Deployment**: not verifiable from here (cluster access is the user's) — ask.
 - **Docs claims**: open the actual files — e.g. after a Java 21 migration the README
   badge must say 21, `organization.md` tables must reflect a rename.
