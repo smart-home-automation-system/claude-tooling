@@ -12,6 +12,7 @@ Contains the `smart-home` plugin with skills shared across all repositories:
 | `service-review` | Review code against organization conventions (reactive rules, shared libs, contracts, versions) |
 | `release` | Guided release checklist for services (Docker Hub) and libraries (GitHub Packages) |
 | `cleanup-releases` | Prune old GitHub releases + GitHub Packages versions of a shared library — keep only the 3 newest (git tags untouched, consumer poms checked first) |
+| `cleanup-dockerhub` | Prune all Docker Hub repos of the account — keep the 2 newest version tags + `latest` per repo; full deletion plan accepted by the user first (k8s manifests checked) |
 | `sync-org-docs` | Keep `organization.md` and the org profile README in sync with reality |
 | `deps-update` | Audit dependency versions across all workspace repos, plan upgrades |
 | `update-readme` | Bring a repo README up to org standard: badges, description, API docs |
