@@ -36,8 +36,9 @@ Package versions (maven package name = `<groupId>.<artifactId>`, e.g.
 
 - org library: `gh api /orgs/smart-home-automation-system/packages/maven/<name>/versions --paginate`
 - personal library: `gh api /user/packages/maven/<name>/versions --paginate`
-  (requires `gh` authenticated as `magikabdul`; token needs the `delete:packages` scope
-  for step 4 — check with `gh auth status`)
+  (requires `gh` authenticated as `magikabdul`; for deletion the token needs **both**
+  `read:packages` and `delete:packages` — check with `gh auth status`, fix with
+  `gh auth refresh -h github.com -s read:packages,delete:packages`)
 
 Then:
 
