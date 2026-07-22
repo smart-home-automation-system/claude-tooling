@@ -11,6 +11,7 @@ Contains the `smart-home` plugin with skills shared across all repositories:
 | `new-library` | Scaffold a new shared Maven library (GitHub Packages release flow) |
 | `service-review` | Review code against organization conventions (reactive rules, shared libs, contracts, versions) |
 | `release` | Guided release checklist for services (Docker Hub) and libraries (GitHub Packages) |
+| `cleanup-releases` | Prune old GitHub releases + GitHub Packages versions of a shared library — keep only the 3 newest (git tags untouched, consumer poms checked first) |
 | `sync-org-docs` | Keep `organization.md` and the org profile README in sync with reality |
 | `deps-update` | Audit dependency versions across all workspace repos, plan upgrades |
 | `update-readme` | Bring a repo README up to org standard: badges, description, API docs |
