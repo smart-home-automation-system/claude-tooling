@@ -37,7 +37,7 @@ loops, so treat these as high severity:
 **Cross-repo contracts** — changes here break other repos at runtime, not at compile time:
 - REST paths/DTOs that `api-gateway-service` routes to, or that other services call
 - RabbitMQ exchange/queue names and message payload shapes (consumers:
-  `gateway-service`, `heating-service`, `notification-service`)
+  `amx-service`, `heating-service`, `notification-service`)
 - For a **library**: any breaking public-API change → list the affected consumers from the
   organization.md table and state the required semver bump (breaking → major).
 
