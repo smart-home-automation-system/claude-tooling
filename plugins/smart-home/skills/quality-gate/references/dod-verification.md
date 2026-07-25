@@ -28,10 +28,23 @@ gh run list -R smart-home-automation-system/<repo> --branch main --limit 5 \
 gh release list -R smart-home-automation-system/<repo> -L 3
 docker manifest inspect magikabdul/<repo>:<version> >/dev/null && echo "image exists"
 gh api /orgs/smart-home-automation-system/packages/maven/<group.artifact>/versions --jq '.[].name'
+
+# k8s rollout (context kind-smart-home-backend, namespace smart-home)
+kubectl -n smart-home rollout status deployment/<repo> --timeout=30s
+kubectl -n smart-home get pods -l name=<repo> \
+  -o jsonpath='{.items[*].status.containerStatuses[*].imageID}{"\n"}{.items[*].status.containerStatuses[*].restartCount}'
+kubectl -n smart-home logs deployment/<repo> --tail=40
 ```
 
 For `cholewa-commons`/`cholewa-security` substitute the personal account
 (`-R magikabdul/<repo>`, packages under `/users/magikabdul/packages/...`).
+
+The `imageID` digest must equal the digest of the released Docker Hub tag — that is the
+check that the cluster runs *this* release. If the `docker` CLI is unavailable (it often is
+on WSL), read the digest from the Hub API instead: log in at
+`https://hub.docker.com/v2/users/login/` with `DOCKERHUB_USERNAME`/`DOCKERHUB_TOKEN` from
+`<workspace-root>/.env` and GET
+`https://hub.docker.com/v2/repositories/magikabdul/<repo>/tags`.
 
 ## Tick verified checkboxes
 

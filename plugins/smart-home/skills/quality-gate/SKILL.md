@@ -51,7 +51,15 @@ remote evidence (survives machine changes) over local state:
 - **Local run**: verifiable — start the service with the `local` profile
   (`mvn spring-boot:run -Dspring-boot.run.profiles=local` or the repo's documented
   command) and confirm it boots without errors; stop it afterwards.
-- **Deployment**: not verifiable from here (cluster access is the user's) — ask.
+- **Deployment**: verifiable — the workspace machine has `kubectl` with the
+  `kind-smart-home-backend` context and the `smart-home` namespace. Run
+  `kubectl -n smart-home rollout status deployment/<repo>`, then confirm the pod is
+  Running with 0 restarts and that its container `imageID` digest **matches the digest of
+  the released tag on Docker Hub** — that is what proves the cluster runs the artifact
+  this task released, not a stale image. Finish with `kubectl logs deployment/<repo>` to
+  confirm the started version and a clean startup. Only if the cluster is unreachable,
+  fall back to asking the user. Verification is read-only; never `apply`, restart or scale
+  anything as part of the gate.
 - **Docs claims**: open the actual files — e.g. after a Java 21 migration the README
   badge must say 21, `organization.md` tables must reflect a rename.
 
