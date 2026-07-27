@@ -59,11 +59,25 @@ closing the old sprint (issues left in a sprint when it closes fall back to the 
 
 ## Close the old sprint
 
+`PUT` is a full update here too — `{"state": "closed"}` alone fails with
+`400 {"errors":{"name":"Sprint name is required"}}` and leaves the rotation half-done
+(new sprint created and filled, old one still active). GET the sprint first and resend
+its `name`, `startDate` and `endDate` alongside the new state:
+
 ```bash
+OLD=$(curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" \
+  "https://magikabdul.atlassian.net/rest/agile/1.0/sprint/<oldSprintId>")
+NAME=$(echo "$OLD" | jq -r .name)
+START=$(echo "$OLD" | jq -r .startDate)
+END=$(echo "$OLD" | jq -r .endDate)
+
 curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" -H "Content-Type: application/json" \
   -X PUT "https://magikabdul.atlassian.net/rest/agile/1.0/sprint/<oldSprintId>" \
-  -d '{"state": "closed"}'
+  -d "{\"name\": \"$NAME\", \"state\": \"closed\", \"startDate\": \"$START\", \"endDate\": \"$END\"}"
 ```
+
+If the close does fail mid-rotation, nothing is lost: re-run this step, then activate the
+new sprint. The issues already moved stay in the new sprint.
 
 ## Activate the new sprint (dates required for future → active)
 
@@ -76,7 +90,8 @@ curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" -H "Content-Type: application/json" \
 ```
 
 PUT is a full update — omitting `name` fails with "Sprint name is required", so always
-resend it. Only one sprint can be active per board — close the old one first.
+resend it (this applies to **every** sprint PUT, closing included). Only one sprint can be
+active per board — close the old one first.
 
 ## Errors
 
