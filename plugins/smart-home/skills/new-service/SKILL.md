@@ -22,8 +22,9 @@ Ask only for what cannot be derived:
   `shelly-client`) and whether it uses RabbitMQ.
 
 Derive the **local port**: read the service table in
-`organization-repository/claude/organization.md` and take the next free `60xx` port.
-In-cluster every service listens on `6200` (management `9200`) — do not change that.
+`organization-repository/claude/organization.md` and take the next free `60xx` port; the
+matching Actuator port is `80xx`. In-cluster every service listens on `6200` with Actuator
+on `8200` — do not change that.
 
 ## 2. Scaffold from the reference
 
@@ -36,8 +37,9 @@ Copy from `water-service/` and adapt (names, packages, ports, only the requested
   older versions awaiting migration; new services always start on the target.
 - `src/main/java/cloud/cholewa/<domain>/` — application class + minimal package layout;
   `src/test/...` — matching test skeleton (context-loads test at minimum).
-- `src/main/resources/application.yaml` — `spring.application.name`, server port `6200`,
-  a `local` profile with the assigned `60xx` port, mirroring the reference structure.
+- `src/main/resources/application.yaml` — `spring.application.name`, server port `6200`
+  with `management.server.port: 8200`, a `local` profile with the assigned `60xx` /
+  `80xx` pair, mirroring the reference structure.
 - `Dockerfile` — copy verbatim.
 - `.github/workflows/CI.yml`, `release.yml`, `sonar.yml` — adjust only: Docker image name
   (`magikabdul/<service-name>` in release.yml) and the Sonar project key

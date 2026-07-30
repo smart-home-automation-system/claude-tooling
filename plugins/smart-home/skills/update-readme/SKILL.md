@@ -19,7 +19,8 @@ Works on the current repo (or the one the user names). Detect the type first: se
 <badge block>
 One-paragraph description (what it controls/integrates, its role in the system).
 ## Run locally
-Build (`mvn verify`), local profile port `60xx`, in-cluster port 6200.
+Build (`mvn verify`), local profile port `60xx` (Actuator `80xx`), in-cluster port 6200
+(Actuator 8200).
 ## API
 Endpoint table generated from code.
 ## Messaging          <- only if the service uses RabbitMQ

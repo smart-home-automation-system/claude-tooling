@@ -17,8 +17,8 @@ review.
 ## Build & run
 
 - Build + tests: `mvn verify`
-- Local run: `local` Spring profile, port `<60xx>`; in-cluster port `6200`
-  (management `9200`).
+- Local run: `local` Spring profile, port `<60xx>` (Actuator `<80xx>`); in-cluster port
+  `6200`, Actuator `8200`.
 
 ## Specifics
 
