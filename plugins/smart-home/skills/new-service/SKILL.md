@@ -68,9 +68,26 @@ Ask before each outward-facing step — never assume consent for repo creation o
    organization level; if not, remind the user to add them.
 4. Remind the user of the manual step: import the project in SonarCloud (the sonar.yml
    run fails until the project exists there).
-5. Remind the user to enable branch protection on `main` (require pull requests) — the
-   org rule is PR-only changes from `feature/HAS-<n>` branches; only the initial
-   scaffold commit lands on `main` directly.
+5. Repo settings — a fresh repo does not match the org defaults; apply them after the
+   scaffold commit is pushed (ask first, it is an outward-facing change):
+
+   ```
+   gh api -X PATCH repos/smart-home-automation-system/<name> \
+     -f allow_squash_merge=true -F allow_merge_commit=false \
+     -F allow_rebase_merge=false -F delete_branch_on_merge=true
+
+   gh api -X PUT repos/smart-home-automation-system/<name>/branches/main/protection \
+     --input protection.json
+   ```
+
+   with `protection.json` mirroring every other service — `enforce_admins: true`
+   (the owner is an admin, so without it the rule protects nobody),
+   `required_pull_request_reviews` with `required_approving_review_count: 0` (a
+   solo developer cannot approve their own PR), `required_conversation_resolution: true`,
+   `allow_force_pushes` / `allow_deletions` false, `required_status_checks: null`.
+   The org rule is PR-only changes from `feature/HAS-<n>` branches; only the initial
+   scaffold commit lands on `main` directly, so enable protection **after** it.
+   Verify with an empty commit: the push must be rejected with `GH006`.
 
 ## 4. Update org docs
 
