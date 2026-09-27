@@ -16,6 +16,7 @@ Contains the `smart-home` plugin with skills shared across all repositories:
 | `sync-org-docs` | Keep `organization.md` and the org profile README in sync with reality |
 | `deps-update` | Audit dependency versions across all workspace repos, plan upgrades |
 | `update-readme` | Bring a repo README up to org standard: badges, description, API docs |
+| `sync-bruno` | Keep the Bruno collection (`D:\OneDrive\Bruno\home`) in sync with the services' endpoints, following its conventions; every change shown to and accepted by the user before it is written |
 | `jira-backlog` | Feature description → scoped Jira tasks with DoD checklists, created in the HAS backlog after user acceptance (credentials in `<workspace>/.env`) |
 | `jira-sprint` | Monthly sprint management on the HAS board: status, close at ≥7 Done, carry-over into a new element-named sprint, top-up to ≥10 tasks with the user |
 | `quality-gate` | DoD gate for a task: judge which items apply, verify the rest with evidence (PRs, CI, releases, docs), report pass/fail; ticks checkboxes in Jira after confirmation |
