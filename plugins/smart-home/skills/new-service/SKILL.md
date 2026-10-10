@@ -20,6 +20,11 @@ Ask only for what cannot be derived:
 - **Purpose**: one sentence — it goes into the pom `<description>`, README and CLAUDE.md.
 - **Integrations**: which shared libraries it needs (`cholewa-commons`, `smart-home-sdk`,
   `shelly-client`) and whether it uses RabbitMQ.
+- **Database**: ask explicitly, every time — *will this service talk to a database?* The
+  reference does, so everything it needs for that would otherwise be copied along; the answer
+  decides whether the database part of the scaffold (below) is kept or left out. Do not guess
+  it from the purpose, and do not keep it "for later": a service that gets a database later
+  adds the part in that task.
 
 Derive the **local port**: read the service table in
 `organization-repository/claude/organization.md` and take the next free `60xx` port; the
@@ -31,7 +36,8 @@ on `8200` — do not change that.
 Copy from `water-service/` and adapt (names, packages, ports, only the requested deps):
 
 - `pom.xml` — artifactId/name/description; keep the `<repositories>` block exactly as in
-  the reference; drop unneeded dependencies. **Versions**: set `spring-boot-starter-parent`
+  the reference; drop unneeded dependencies — the database part by the answer above, see
+  **The database part**. **Versions**: set `spring-boot-starter-parent`
   and `java.version` to the org **target toolchain** from the Conventions section of
   `organization-repository/claude/organization.md` — the reference repo may still be on
   older versions awaiting migration; new services always start on the target.
@@ -55,6 +61,46 @@ Copy from `water-service/` and adapt (names, packages, ports, only the requested
 
 The repo will be public: no secrets, tokens, IPs or private infrastructure details in any
 file.
+
+### The database part
+
+Everything in the reference that exists only because `water-service` has a database. Read
+the reference for the current list — it grows with the reference — but today it is:
+
+- **pom.xml, runtime**: `spring-boot-starter-data-r2dbc`, `spring-boot-starter-flyway`,
+  `flyway-database-postgresql`, `spring-jdbc`, `postgresql`, `r2dbc-postgresql`.
+- **pom.xml, test**: `spring-boot-starter-data-r2dbc-test`, `spring-boot-starter-flyway-test`
+  and the two Testcontainers artifacts (`testcontainers-junit-jupiter`,
+  `testcontainers-postgresql`) with the comment above them.
+- **application.yaml**: the `spring.flyway` block, the whole `database.*` group (the pool size
+  included) and `spring.flyway.enabled: false` in the `test` document.
+- **Sources**: `src/main/resources/db/migration/`, the `database` package, and in the tests
+  the repository test and the test that pins `database.pool.max-size`.
+- **README / CLAUDE.md**: the Database section, the connection properties under "Run
+  locally", the note that `mvn verify` needs a running Docker.
+
+**Without a database — leave all of it out.** None of the dependencies above stays in the
+pom: a leftover Flyway or R2DBC starter brings auto-configuration that can ask for connection
+settings the service does not have, and a leftover Testcontainers dependency — harmless at runtime
+(test scope, nothing starts without a test that asks for a container) — is dead weight with
+a comment pointing at a test the service does not have. After the scaffold, `mvn -q verify`
+must pass and `mvn dependency:tree` must show none of the artifacts above; that is the check
+that nothing of the part was left behind.
+
+**With a database — keep all of it, the Testcontainers artifacts included**, and adapt:
+
+- An own database on the managed cluster (`home-automation-<domain>`), created in the task
+  that scaffolds the service; the manifest in `deployment-tools` carries the `env` block with
+  the `database-*` properties and the Flyway URL, like the reference.
+- `database.pool.max-size` is **not copied**: it is the share of the service in the 22
+  backend connections of the managed database, and the split is in the Conventions of
+  `organization.md`. Propose a share (2 unless the service needs more), re-do the rollout sum
+  written there with the user, and pin the number with the test.
+- `db/migration` starts with a `V1` of the new service; the migrations, the entity and the
+  repository of the reference are not copied. The repository test of the reference is the
+  pattern for a PostgreSQL-only statement, not a file to keep: keep the Testcontainers
+  dependencies with a comment that names no test, and write the test with the first such
+  statement. Until then `mvn verify` needs no Docker; say in CLAUDE.md that it will.
 
 ## 3. Git and GitHub
 
@@ -97,6 +143,7 @@ port) and to `organization-repository/profile/README.md` (badge section). The
 
 ## 5. Verify
 
-- `mvn -q verify` in the new repo must pass locally.
+- `mvn -q verify` in the new repo must pass locally; for a service without a database also
+  the dependency check of **The database part**.
 - After push, trigger `CI.yml` via `workflow_dispatch` (`gh workflow run CI.yml`) and
   confirm it goes green; report the result to the user.

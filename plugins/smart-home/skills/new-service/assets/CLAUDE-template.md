@@ -12,6 +12,7 @@ review.
 
 - Talks to: <api-gateway routes? RabbitMQ queues? other services?>
 - Uses libraries: <cholewa-commons / smart-home-sdk / shelly-client>
+- Database: <own database `home-automation-<domain>`, its share of the connection budget / none>
 - Integrates with hardware: <Shelly / AMX / none>
 
 ## Build & run
