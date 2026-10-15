@@ -11,7 +11,8 @@ applicability**, **verify with evidence**, **report honestly**. It never marks a
 done in Jira without user confirmation and never transitions task status — that stays
 manual.
 
-Jira site/credentials: as in `jira-backlog` (`<workspace-root>/.env`); generic API
+Jira site/credentials: as in `jira-backlog` (`bash organization-repository/claude/scripts/jira-api.sh` from the
+workspace root, credentials in `<workspace-root>/.env`, never read by hand); generic API
 templates in `../jira-backlog/references/jira-api.md`, gate-specific ones (reading and
 ticking ADF checkboxes, comments) in `references/dod-verification.md`.
 

@@ -11,9 +11,10 @@ rotates. It never assigns people, changes issue statuses, or touches sprint scop
 what is agreed in the conversation.
 
 Jira site: `https://magikabdul.atlassian.net`, project `HAS`, board `3`.
-Credentials: same `<workspace-root>/.env` as jira-backlog (`JIRA_EMAIL`,
-`JIRA_API_TOKEN`); never print the token; verify auth with `myself` first.
-Endpoints and curl templates: `references/agile-api.md`. Element order for names:
+Credentials: as in jira-backlog — every call through `bash organization-repository/claude/scripts/jira-api.sh`
+from the workspace root, which loads `JIRA_EMAIL` / `JIRA_API_TOKEN` from
+`<workspace-root>/.env`; never source or read the `.env` yourself; verify auth with
+`myself` first. Endpoints and call templates: `references/agile-api.md`. Element order for names:
 `references/elements.md`.
 
 ## The rules (org decisions)

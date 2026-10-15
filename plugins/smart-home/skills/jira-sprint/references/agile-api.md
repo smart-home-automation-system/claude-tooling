@@ -1,14 +1,16 @@
 # Jira Agile REST API — sprint management on board 3
 
-Base: `https://magikabdul.atlassian.net/rest/agile/1.0`. Auth: HTTP Basic
-`$JIRA_EMAIL:$JIRA_API_TOKEN` from `<workspace-root>/.env`, `Content-Type:
-application/json` on writes. Write JSON payloads to temp files and use `-d @file.json`.
+Base: `https://magikabdul.atlassian.net/rest/agile/1.0`. Every call goes through
+`bash organization-repository/claude/scripts/jira-api.sh <path below /rest/> [curl args]`, run from the workspace
+root — the script loads `JIRA_EMAIL` / `JIRA_API_TOKEN` from `<workspace-root>/.env` and
+never prints them (setup: `organization-repository/claude/SETUP.md`, section 4a). Never
+source the `.env` yourself. `Content-Type: application/json` on writes; write JSON payloads
+to temp files and use `-d @file.json`.
 
 ## Sprints of the board (name history for element naming)
 
 ```bash
-curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" \
-  "https://magikabdul.atlassian.net/rest/agile/1.0/board/3/sprint?state=active,closed,future&maxResults=50"
+bash organization-repository/claude/scripts/jira-api.sh 'agile/1.0/board/3/sprint?state=active,closed,future&maxResults=50'
 ```
 
 Active only: `?state=active`. Response: `values[]` with `id`, `name`, `state`,
@@ -17,11 +19,10 @@ Active only: `?state=active`. Response: `values[]` with `id`, `name`, `state`,
 ## Issues and Done count of a sprint
 
 ```bash
-curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" --get \
+bash organization-repository/claude/scripts/jira-api.sh api/3/search/jql --get \
   --data-urlencode 'jql=sprint = <sprintId>' \
   --data-urlencode 'fields=summary,status,parent' \
-  --data-urlencode 'maxResults=100' \
-  "https://magikabdul.atlassian.net/rest/api/3/search/jql"
+  --data-urlencode 'maxResults=100'
 ```
 
 Done = issues with `fields.status.statusCategory.key == "done"`. Count both ways
@@ -30,17 +31,15 @@ Done = issues with `fields.status.statusCategory.key == "done"`. Count both ways
 ## Backlog candidates (top-up planning)
 
 ```bash
-curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" --get \
+bash organization-repository/claude/scripts/jira-api.sh api/3/search/jql --get \
   --data-urlencode 'jql=project = HAS AND issuetype = Task AND statusCategory != Done AND sprint IS EMPTY ORDER BY parent, created' \
-  --data-urlencode 'fields=summary,status,parent,labels' \
-  "https://magikabdul.atlassian.net/rest/api/3/search/jql"
+  --data-urlencode 'fields=summary,status,parent,labels'
 ```
 
 ## Create a sprint (state starts as `future`)
 
 ```bash
-curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" -H "Content-Type: application/json" \
-  -X POST "https://magikabdul.atlassian.net/rest/agile/1.0/sprint" \
+bash organization-repository/claude/scripts/jira-api.sh agile/1.0/sprint -X POST -H "Content-Type: application/json" \
   -d '{"name": "2026-08 Hydrogen", "originBoardId": 3}'
 ```
 
@@ -49,9 +48,8 @@ Response contains the new sprint `id`.
 ## Move issues into a sprint (max 50 keys per call)
 
 ```bash
-curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" -H "Content-Type: application/json" \
-  -X POST "https://magikabdul.atlassian.net/rest/agile/1.0/sprint/<newSprintId>/issue" \
-  -d '{"issues": ["HAS-113", "HAS-114"]}'
+bash organization-repository/claude/scripts/jira-api.sh agile/1.0/sprint/<newSprintId>/issue -X POST \
+  -H "Content-Type: application/json" -d '{"issues": ["HAS-113", "HAS-114"]}'
 ```
 
 Moving an issue that sits in the active sprint removes it from there — do this BEFORE
@@ -65,14 +63,13 @@ closing the old sprint (issues left in a sprint when it closes fall back to the 
 its `name`, `startDate` and `endDate` alongside the new state:
 
 ```bash
-OLD=$(curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" \
-  "https://magikabdul.atlassian.net/rest/agile/1.0/sprint/<oldSprintId>")
+OLD=$(bash organization-repository/claude/scripts/jira-api.sh agile/1.0/sprint/<oldSprintId>)
 NAME=$(echo "$OLD" | jq -r .name)
 START=$(echo "$OLD" | jq -r .startDate)
 END=$(echo "$OLD" | jq -r .endDate)
 
-curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" -H "Content-Type: application/json" \
-  -X PUT "https://magikabdul.atlassian.net/rest/agile/1.0/sprint/<oldSprintId>" \
+bash organization-repository/claude/scripts/jira-api.sh agile/1.0/sprint/<oldSprintId> -X PUT \
+  -H "Content-Type: application/json" \
   -d "{\"name\": \"$NAME\", \"state\": \"closed\", \"startDate\": \"$START\", \"endDate\": \"$END\"}"
 ```
 
@@ -84,8 +81,8 @@ new sprint. The issues already moved stay in the new sprint.
 ```bash
 START=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
 END=$(date -u -d "+1 month" +%Y-%m-%dT%H:%M:%S.000Z)
-curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" -H "Content-Type: application/json" \
-  -X PUT "https://magikabdul.atlassian.net/rest/agile/1.0/sprint/<newSprintId>" \
+bash organization-repository/claude/scripts/jira-api.sh agile/1.0/sprint/<newSprintId> -X PUT \
+  -H "Content-Type: application/json" \
   -d "{\"name\": \"<sprint name>\", \"state\": \"active\", \"startDate\": \"$START\", \"endDate\": \"$END\"}"
 ```
 
@@ -95,6 +92,8 @@ active per board — close the old one first.
 
 ## Errors
 
+- The script exits non-zero on any HTTP error and prints the body Jira answered with.
 - `400` on activate — usually missing dates or another sprint still active.
+- `401` — the token is missing, wrong or expired in `<workspace-root>/.env`; tell the user.
 - `404` — wrong sprint id or the sprint belongs to another board.
 - Verify every mutation with a follow-up GET (sprint state, issue counts).

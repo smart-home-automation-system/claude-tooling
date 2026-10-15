@@ -1,13 +1,14 @@
 # quality-gate — verification and Jira update templates
 
-Auth as everywhere: `$JIRA_EMAIL:$JIRA_API_TOKEN` from `<workspace-root>/.env` (Jira),
-`gh` CLI (GitHub). Never print the token.
+Auth as everywhere: Jira through `bash organization-repository/claude/scripts/jira-api.sh <path below /rest/>
+[curl args]`, run from the workspace root (it loads `JIRA_EMAIL` / `JIRA_API_TOKEN` from
+`<workspace-root>/.env` and never prints them — never source the `.env` yourself); `gh` CLI
+(GitHub).
 
 ## Read the DoD with checkbox states
 
 ```bash
-curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" \
-  "https://magikabdul.atlassian.net/rest/api/3/issue/HAS-<n>?fields=summary,status,parent,description"
+bash organization-repository/claude/scripts/jira-api.sh 'api/3/issue/HAS-<n>?fields=summary,status,parent,description'
 ```
 
 DoD = the `taskList` node in `fields.description.content`; each `taskItem` has
@@ -52,20 +53,20 @@ GET the full description ADF, set `attrs.state = "DONE"` on the verified `taskIt
 (match by text, not position), PUT back the whole description:
 
 ```bash
-curl -s -o /dev/null -w "%{http_code}" -u "$JIRA_EMAIL:$JIRA_API_TOKEN" \
-  -H "Content-Type: application/json" \
-  -X PUT "https://magikabdul.atlassian.net/rest/api/3/issue/HAS-<n>" \
+bash organization-repository/claude/scripts/jira-api.sh api/3/issue/HAS-<n> -o /dev/null -w "%{http_code}" \
+  -X PUT -H "Content-Type: application/json" \
   -d @updated-description.json   # {"fields": {"description": <full modified ADF>}}
 ```
+
+Through API v3 only — v2 flattens the checkboxes of the DoD.
 
 Modify only checkbox states — do not touch other content. Verify with a follow-up GET.
 
 ## Gate report comment
 
 ```bash
-curl -s -u "$JIRA_EMAIL:$JIRA_API_TOKEN" -H "Content-Type: application/json" \
-  -X POST "https://magikabdul.atlassian.net/rest/api/3/issue/HAS-<n>/comment" \
-  -d @comment.json
+bash organization-repository/claude/scripts/jira-api.sh api/3/issue/HAS-<n>/comment -X POST \
+  -H "Content-Type: application/json" -d @comment.json
 ```
 
 `comment.json` body is ADF: heading "Quality gate report" + a bulletList with one line

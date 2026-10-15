@@ -10,21 +10,18 @@ The user handles everything after creation (sprints, transitions, closing) manua
 Jira — this skill only plans and creates.
 
 Jira site: `https://magikabdul.atlassian.net`, project key `HAS`, board 3.
-API details and ready curl templates: read `references/jira-api.md` before calling the API.
+API details and ready call templates: read `references/jira-api.md` before calling the API.
 
 ## Credentials
 
-Read `<workspace-root>/.env` (the workspace directory containing all repo clones — this
-file lives outside every git repo on purpose; it is shared by any skill needing secrets):
-
-```
-JIRA_EMAIL=<atlassian account email>
-JIRA_API_TOKEN=<API token from id.atlassian.com → Security → API tokens>
-```
-
-Never print the token. If the file or variables are missing, stop and tell the user how
-to create the token and the file. Verify auth with the `myself` endpoint before doing
-anything else.
+Every call goes through `bash organization-repository/claude/scripts/jira-api.sh <path below /rest/> [curl args]`,
+run from the workspace root (the directory containing all repo clones). The script loads
+`JIRA_EMAIL` and `JIRA_API_TOKEN` from `<workspace-root>/.env` — a file outside every git
+repo, shared by the skills needing secrets — and never prints them. **Never source or read
+the `.env` yourself.** The script, the variables and the allow rule it needs are set up per
+`organization-repository/claude/SETUP.md`, section 4a; if any of them is missing, stop and
+tell the user what to set up. Verify auth with the `myself` endpoint before doing anything
+else.
 
 ## Workflow
 
