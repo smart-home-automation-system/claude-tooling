@@ -52,8 +52,9 @@ remote evidence (survives machine changes) over local state:
 - **Local run**: verifiable — start the service with the `local` profile
   (`mvn spring-boot:run -Dspring-boot.run.profiles=local` or the repo's documented
   command) and confirm it boots without errors; stop it afterwards.
-- **Deployment**: verifiable — the workspace machine has `kubectl` with the
-  `kind-smart-home-backend` context and the `smart-home` namespace. Run
+- **Deployment**: verifiable — the workspace machine has `kubectl` pointed at the cluster
+  (its current context - do not assume a name: on the owner's machine it is `home`) and the
+  `smart-home` namespace; pods carry the label `name=<repo>`. Run
   `kubectl -n smart-home rollout status deployment/<repo>`, then confirm the pod is
   Running with 0 restarts and that its container `imageID` digest **matches the digest of
   the released tag on Docker Hub** — that is what proves the cluster runs the artifact

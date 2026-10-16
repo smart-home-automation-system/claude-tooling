@@ -30,7 +30,8 @@ gh release list -R smart-home-automation-system/<repo> -L 3
 docker manifest inspect magikabdul/<repo>:<version> >/dev/null && echo "image exists"
 gh api /orgs/smart-home-automation-system/packages/maven/<group.artifact>/versions --jq '.[].name'
 
-# k8s rollout (context kind-smart-home-backend, namespace smart-home)
+# k8s rollout (the current kubectl context - `home` on the owner's machine; namespace smart-home;
+# pods are labelled name=<repo>)
 kubectl -n smart-home rollout status deployment/<repo> --timeout=30s
 kubectl -n smart-home get pods -l name=<repo> \
   -o jsonpath='{.items[*].status.containerStatuses[*].imageID}{"\n"}{.items[*].status.containerStatuses[*].restartCount}'
