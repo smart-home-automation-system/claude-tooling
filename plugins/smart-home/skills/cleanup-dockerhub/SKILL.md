@@ -22,16 +22,20 @@ The PAT needs **Read, Write, Delete** permissions (hub.docker.com → Account Se
 Personal access tokens). If the keys are missing, tell the user exactly that and stop —
 never ask for the token in chat.
 
-Login (PAT goes in the `password` field), the JWT is used for all later calls:
+Claude never reads `.env` itself (the auto-mode classifier refuses it): every call goes through
+`organization-repository/claude/scripts/dockerhub-api.sh`, run from the workspace root, which
+loads the file, logs in (the PAT in the `password` field) and passes the JWT to `curl` without
+printing either (SETUP.md, section 4a):
 
 ```
-curl -s -X POST https://hub.docker.com/v2/users/login \
-  -H "Content-Type: application/json" \
-  -d '{"username": "'$DOCKERHUB_USERNAME'", "password": "'$DOCKERHUB_TOKEN'"}'
-# → {"token": "<jwt>"}
+bash organization-repository/claude/scripts/dockerhub-api.sh 'repositories/<user>/?page_size=100'
+bash organization-repository/claude/scripts/dockerhub-api.sh - [curl args] < paths.txt   # one login, one call per line
 ```
 
-Never print the token or the JWT into the conversation; keep them in shell variables.
+`<user>` in a path is replaced by the account name. There is no `jq` on the machine: keep the
+answers in the scratchpad (one JSON body per line) and parse them with PowerShell
+(`ConvertFrom-Json`) or `node`. A path list written by PowerShell has CRLF line endings — pass it
+through `tr -d '\r'` before the script reads it, or curl rejects every URL and nothing happens.
 
 ## 2. Inventory (read-only)
 
@@ -66,14 +70,13 @@ Docker Hub is irreversible. With many repos, offer per-repo acceptance as an opt
 
 ## 5. Delete
 
-For each accepted tag:
+The accepted tags as one path per line (`repositories/<user>/<repo>/tags/<tag>/`), then one call:
 
 ```
-curl -s -X DELETE -H "Authorization: Bearer $JWT" \
-  https://hub.docker.com/v2/repositories/<user>/<repo>/tags/<tag>/
+bash organization-repository/claude/scripts/dockerhub-api.sh - -X DELETE -o /dev/null -w '%{http_code} %{url}' < delete-paths.txt
 ```
 
-204 = success. On an error report the repo/tag and continue with the rest — no blind
+204 = success; count the statuses before trusting the result. On an error report the repo/tag and continue with the rest — no blind
 retries. Untagged images are garbage-collected by Docker Hub itself; nothing more to do.
 
 ## 6. Verify and report
